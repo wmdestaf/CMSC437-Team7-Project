@@ -1,9 +1,42 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset = "utf-8">
+		<title>Central ICU Patient eHealth and eMonitoring System - Login</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<style>
+		#login {
+			border: 3px solid black;
+			margin-top: 100px;
+			margin-left: 0px;
+			padding: 10px;
+			background-color: white;
+		}
+	</style>
+	<script async>
+		function submit() {
+			alert("Not Yet Implemented.");
+		}
+	</script>
 	</head>
-	<body>
-		<h1>Login Page</h1>
+	<body style="background-color: powderblue">
+		<div class="row form-group">
+			<div class="col-sm-4 offset-sm-4">
+				<div id="login" class="text-center">
+					
+					<h3>Central ICU Patient eHealth and eMonitoring System</h3>
+					<label for="username">Username:</label>
+					<input id="username"></input>
+					<br>
+					<label for="password">Password:</label>
+					<input type="password" id="password"></input>
+					<br>
+					<button onclick="submit()">Login!</button>
+				
+				</div>
+			</div>
+		</div>
+
 		<p><a href="nurse_landing.html">Nurse</a></p>
 		<p><a href="phys_landing.html">Physician</a></p>
 	</body>
