@@ -85,8 +85,9 @@ print "\t},\n";
 print "\t\"saved-images\": [\n";
 my $img_ct = rand(5) + 1;
 for(my $i = 0; $i < $img_ct; $i++) {
+	my $randfile = int(rand(9)) . ".png";
 	my $path = "ICU/patientdata/" . $ARGV[0] . generateDate() . ".png";
-	#TODO: copy a valid image into the associated path
+	system("cp ../xrays/$randfile ../$path");
 	print "\t\t\"$path\",\n";
 }
 print "\t],\n";
