@@ -1,0 +1,44 @@
+"data1": {
+	"information": {
+		"name": "Josh Brown",
+		"dob": "07-19-1962",
+		"sex": "M",
+		"height": 154, //cm
+		"weight": 45   //kg
+	},
+	"currently-admitted": 1,
+	"medical-history": {
+		"04-05-2001": "Surgery on left knee",
+		"05-22-2008": "Appendix removed",
+		"12-22-2016": "Major Stroke",
+	},
+	"current-medications": [
+		"Midazalam",
+		"Viagra",
+		"xHance"
+	],
+	"former-medications": [
+		"Hydrocortizone",
+		"Morphine"
+	],
+	"conditions": [
+		"Allergic rhinitis",
+		"Diabetes Type C",
+	],
+	"reason-for-stay": "In the ICU after being hospitalized for a second stroke.",
+	"saved-vitals": {
+		"12-22-2016": {
+			"hr": 100,
+			"bp": "120/80",
+			"SPo2": 95,
+			"Bpm": 14,
+			"tmp": 98.6,
+		},
+	},
+	"saved-images": [
+		"ICU/patientdata/jbrownXray05-22-2008.png",
+		"ICU/patientdata/jbrownXray06-22-2008.png",
+		"ICU/patientdata/jbrownXray09-22-2008.png",
+		"ICU/patientdata/jbrownXray12-22-2008.png"
+	],
+},

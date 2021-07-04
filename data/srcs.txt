@@ -1,0 +1,4 @@
+drug names: https://clincalc.com/DrugStats/Top200Drugs.aspx
+conditions: https://www.practicefusion.com/blog/25-most-common-diagnoses/ (this one was in a copy-pasteable <ol>, so not worth writing a script for)
+reasons: https://stacker.com/stories/2046/top-100-reasons-emergency-room-visits
+medical events: https://www.definitivehc.com/0f84e558-bc57-4137-b481-51b645c7e9c5 (gawk "-F," 'BEGIN{flag=0}{ if(flag==1){print $3}flag=1 }' events_raw.csv > medical_events.txt)
