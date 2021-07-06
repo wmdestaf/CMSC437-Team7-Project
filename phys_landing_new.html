@@ -2,11 +2,10 @@
 <html>
 	<head>
 		<meta charset = "utf-8">
-		<title>Nurse Workspace</title>
+		<title>Physician Workspace</title>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-		<script src="landing.js"></script>
 		<script async src="vitals_demo.js"></script>
 
 		<style>
@@ -47,7 +46,7 @@
 			}
 
 			.scheduler{
-				height:300px;
+				height:400px;
 			}
 
 			.scheduler-main{
@@ -67,7 +66,7 @@
 			}
 
 			.scheduler-button{
-				width: 80px;
+				width: 100px;
 			}
 			
 
@@ -90,25 +89,16 @@
 			button {
 				align-content: center;
 				display: block;
-				width: 65px;
-				font-size: 12px;
+				width: 150px;
 				margin: 5px;
 			}
 
-			.devices-buttons-holder{
+			.devices-buttons{
 				margin: 5px;
 
 				display: flex;
 				justify-content: center;
 				flex-direction: column;
-			}
-
-			.devices-buttons{
-				align-content: center;
-				display: block;
-				width: 150px;
-				margin: 5px;
-				font-size: 18px;
 			}
 			
 			.devices-individual{
@@ -137,21 +127,22 @@
 	</head>
 	<body>
 
-       	<h1 style="text-align: center;">Nurse Page</h1>
+        <h1 style="text-align: center;">Physician Page</h1>
 		<h2 id="greeting" style="text-align: center;"></h2>
-		
+
 		<div class="container">
 			<div class="row justify-content-lg-center">
 				<!--Logout and schedule buttons-->
-				<div class="col-lg-1 top-left justify-content-lg-center">
+				<div class="col-lg-2 top-left justify-content-lg-center">
 					<button onclick="logout()"<a href="login.html">Logout</a></button>
 					<br>
+					<a href='phys_schedule.html'><button>Open Shift Scheduler</button></a>
 					<button>Append to selected field</button>
 					<button>Edit selected field</button>
 				</div>
 
 				<!--Data viewer and search-->
-				<div class="col-lg-4 top-mid">
+				<div class="col-lg-5 top-mid">
 					<div class="container" style="display: flex; margin: 5px;">
 						<p style="margin-right: 20px">Data viewer</p>
 						<p class="patient-name">Patient name: -name-</p>
@@ -162,15 +153,24 @@
 							Test
 						</div>
 						<div class= "scheduler-side col-sm-4" style="border: 1px solid red; float: right">
-							<button class="scheduler-button" size="6">Save Vitals</button>
+							<span><input type="text" id="patient" value="patient" size="10"></span>
+							<div class="scheduler-names"></div>
+							<button class="scheduler-button" size="10">Save Vitals</button>
 						</div>
 					</div>
 				</div>
+
 				<!--Patient vitals-->
-				<div class="col-lg-5 top-right">
+				<div class="col-lg-4 top-right">
 					<div class="vitals">
 						<p style="margin: 5px;">Patient Vitals</p>
-						<canvas id="my_canvas" width="450" height="300">Canvas not supported</canvas>
+						<div class= "vitals-main">
+							<div class = "vitals-block">Heart Rate</div>
+							<div class = "vitals-block">Blood Pressure</div>
+							<div class = "vitals-block">O2 Saturation</div>
+							<div class = "vitals-block">Respiration</div>
+							<div class = "vitals-block">Temperature</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -178,9 +178,9 @@
 		<br>
 		<div class="container">
 			<div class="row justify-content-lg-center" style="border: 2px solid black; display: flex;">
-				<div class="col-lg-2 devices-buttons-holder">
-					<button class="devices-buttons">Register Device At Position</button>
-					<button class="devices-buttons">Unregister Selected Device</button>
+				<div class="col-lg-2 devices-buttons">
+					<button>Register Device At Position</button>
+					<button>Unregister Selected Device</button>
 				</div>
 
 				<div class="col-lg-3 devices-individual">
