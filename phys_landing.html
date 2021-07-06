@@ -6,7 +6,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-		<script src="landing.js"></script>
+		<script async src="landing.js"></script>
 		<script async src="vitals.js"></script>
 
 		<style>
@@ -178,23 +178,15 @@
 					<div class="scheduler">
 						<div class= "scheduler-main col-sm-8" style="border: 1px solid blue; float: left">
 							<table id="data-table" class="main_table">
-								<tr><td><strong>Information</strong></td></tr>
-								<tr><td><strong>Medical History</strong></td></tr>
-								<tr><td><strong>Current Medications</strong></td></tr>
-								<tr><td><strong>Former Medications</strong></td></tr>
-								<tr><td><strong>Conditions</strong></td></tr>
-								<tr><td><strong>Reason for stay</strong></td></tr>
-								<tr><td><strong>Vitals</strong></td></tr>
-								<tr><td><strong>Images</strong></td></tr>
 							</table>
 						</div>
 						<div class= "scheduler-side col-sm-4" style="border: 1px solid red; float: right">
-							<span><input type="text" id="patient" size="5" style="margin: 5px;"></span>
+							<span><input type="text" id="patient" size="5" style="margin: 5px;"></input></span>
 							<div class="scheduler-names" style="background-color: #333333; color: white;">
 								<ul id="patient_list" style="list-style-type: none; white-space: nowrap; padding: 2px;">
 								</ul>
 							</div>
-							<button class="scheduler-button" size="6">Save Vitals</button>
+							<button class="scheduler-button" onclick="save_vitals()" size="6">Save Vitals</button>
 						</div>
 					</div>
 				</div>

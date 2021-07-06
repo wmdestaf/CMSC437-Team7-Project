@@ -16,6 +16,11 @@ sub generateDate() {
 	$date;
 }
 
+sub generateTime() {
+	my $time = sprintf("%.2d:%.2d:%.2d", rand(24), rand(60), rand(60));
+	$time;
+}
+
 open(my $drugs_f, '<:encoding(UTF-8)', "drug_names.txt")
     or die "Could not open file drug_names.txt $!";
 open(my $reasons_f, '<:encoding(UTF-8)', "reasons.txt")
@@ -71,7 +76,7 @@ print "\t\"reason-for-stay\": \"" . $events[rand(scalar @events)] . "\",\n";
 print "\t\"saved-vitals\": {\n";
 my $save_ct = int(rand(4)) + 1;
 for(my $i = 0; $i < $save_ct; $i++) {
-	print "\t\t\"" . generateDate() . "\": {\n";
+	print "\t\t\"" . generateDate() . "|" . generateTime() . "\": {\n";
 	print "\t\t\t\"" . "hr\": " . int(rand(100) + 50)  . ",\n";
 	print "\t\t\t\"" . "bp\": \"" . int(rand(100) + 100) . "/" . int(rand(100) + 80) . "\",\n";
 	print "\t\t\t\"" . "SpO2\": " . int(rand(30) + 70) . ",\n";

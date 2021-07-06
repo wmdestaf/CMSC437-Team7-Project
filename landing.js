@@ -84,11 +84,44 @@ function reloadDataViewer(name) {
 	
 	//replace the linked images with links
 	table_html = table_html.replace(/<td>(ICU\/patientdata\/.*?)<\/td>/g, function(base, path) {
-		console.log(path);
 		let oc = "onclick=\"window.open('" + path + "', 'newwindow', 'width=300,height=300'); return false;\"";
 		return "<td><a href=\"" + path + "\" " + oc + ">" + path + "</a></td>";
 	});
 	table.innerHTML = table_html;
+}
+
+function pad(n) {
+	return ("" + n).length == 2 ? n : "0" + n;
+}
+
+function save_vitals() {
+	var now = new Date();
+	var mm = pad(now.getDate());
+	var dd = pad(now.getDay());
+	var yyyy = now.getFullYear();
+	var hh = pad(now.getHours());
+	var mm = pad(now.getMinutes());
+	var ss = pad(now.getSeconds());
+	
+	var selected_name = document.getElementById("patient_list").getElementsByClassName("selected")[0]; //there is only 1 at a time
+	if(!selected_name) {
+		alert("No patient selected!");
+		return;
+	}
+	var old = selected_name.innerHTML; //whyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+	selected_name = old.split(" ");
+	selected_name = "data-" + selected_name[0] + "-" + selected_name[1];
+		
+	var vital_signs = {
+		"hr":   vitals.getHR(),
+		"bp":   vitals.getBPOut() + "/" + vitals.getBPIn(),
+		"SpO2": vitals.getSPO2(),
+		"Bpm":  vitals.getBRPM(),
+		"tmp":  vitals.getTmp(),
+	};
+	patient_data[selected_name]["saved-vitals"][mm + "-" + dd + "-" + yyyy + "|" + hh + ":" + mm + ":" + ss] = vital_signs;
+	
+	reloadDataViewer(old);
 }
 			
 $(document).ready(function(){
@@ -101,37 +134,39 @@ $(document).ready(function(){
 	loadData();
 	loadMap();
 	
-	document.getElementById("patient").oninput = function() {
+	//load in the selection panel
+	var list = ""
+	patient_names.forEach(function(x) {
+		list += "<li>" + x + "</li>";
+	});
+	document.getElementById("patient_list").innerHTML = list;
+	
+	//repair the list by adding listeners
+	$("#patient_list li").on("click", function () {
+		$("#patient_list li").removeClass('selected');
+		$(this).attr('class', 'selected');
+		let patient_name = $(this).html();
+		$("#data-viewer-name").html("Patient name: " + patient_name);
+		reloadDataViewer(patient_name);
+	});
+	
+	$("#patient_list li").hover(function () {
+		$(this).addClass('hovered');
+	}, 
+	function () {
+		$(this).removeClass('hovered');
+	});
+	
+	//selection panel input box;
+	$(document).on('input', '#patient', function(){
 		const regex = new RegExp(this.value, 'ig');
-		
 		let matches = Array(0);
-		patient_names.forEach(function(x) {
-			if(x.match(regex))
-				matches.push(x);
-		});
-
-		var list = ""
-		matches.forEach(function(x) {
-			list += "<li>" + x + "</li>";
-		});
-		
-		var elem = document.getElementById("patient_list");
-		elem.innerHTML = list;
-		
-		//repair the list by adding listeners
-		$("#patient_list li").on("click", function () {
-			$("#patient_list li").removeClass('selected');
-			$(this).attr('class', 'selected');
-			let patient_name = $(this).html();
-			$("#data-viewer-name").html("Patient name: " + patient_name);
-			reloadDataViewer(patient_name);
-		});
-		
-		$("#patient_list li").hover(function () {
-			$(this).addClass('hovered');
-		}, 
-		function () {
-			$(this).removeClass('hovered');
-		});
-	}.call();
+		let list = document.getElementById("patient_list").getElementsByTagName("li");
+		for(let x of list) {
+			if(x.innerHTML.match(regex))
+				x.style.display = "block";
+			else
+				x.style.display = "none";
+		}
+	});
 });
