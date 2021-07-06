@@ -7,7 +7,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 		<script src="landing.js"></script>
-		<script async src="vitals_demo.js"></script>
+		<script async src="vitals.js"></script>
 
 		<style>
 
@@ -52,6 +52,7 @@
 
 			.scheduler-main{
 				height: 95%;
+				overflow: auto;
 			}
 
 			.scheduler-side{
@@ -64,6 +65,7 @@
 				height: 70%;
 				margin: 2px;
 				border: 1px solid black;
+				font-size: 0.8em;
 			}
 
 			.scheduler-button{
@@ -123,14 +125,29 @@
 
 			.devices-inner-block{
 				background-color: white;
-
 				overflow: auto;
 				position: relative;
 				height: 75%;
 				margin: 2px;
 				border: 1px solid black;
 			}
+			
+			.selected {
+				background-color: green;
+			}
 		
+			.hovered {
+				color: #FFFF00;
+			}
+			
+			.main_table {
+				border: 1px solid black;
+				overflow: auto;
+			}
+			
+			.main_table tr {
+				border: 1px solid black;
+			}
 
 		</style>
 
@@ -152,19 +169,31 @@
 				</div>
 
 				<!--Data viewer and search-->
-				<div class="col-lg-4 top-mid">
+				<div class="col-lg-5 top-mid">
 					<div class="container" style="display: flex; margin: 5px;">
 						<p style="margin-right: 20px">Data viewer</p>
-						<p class="patient-name">Patient name: -name-</p>
+						<p class="patient-name" id="data-viewer-name">Patient name: -name-</p>
 					</div> 
 
 					<div class="scheduler">
 						<div class= "scheduler-main col-sm-8" style="border: 1px solid blue; float: left">
-							Test
+							<table id="data-table" class="main_table">
+								<tr><td><strong>Information</strong></td></tr>
+								<tr><td><strong>Medical History</strong></td></tr>
+								<tr><td><strong>Current Medications</strong></td></tr>
+								<tr><td><strong>Former Medications</strong></td></tr>
+								<tr><td><strong>Conditions</strong></td></tr>
+								<tr><td><strong>Reason for stay</strong></td></tr>
+								<tr><td><strong>Vitals</strong></td></tr>
+								<tr><td><strong>Images</strong></td></tr>
+							</table>
 						</div>
 						<div class= "scheduler-side col-sm-4" style="border: 1px solid red; float: right">
-							<span><input type="text" id="patient" value="add name" size="5" style="margin: 5px;"></span>
-							<div class="scheduler-names"></div>
+							<span><input type="text" id="patient" size="5" style="margin: 5px;"></span>
+							<div class="scheduler-names" style="background-color: #333333; color: white;">
+								<ul id="patient_list" style="list-style-type: none; white-space: nowrap; padding: 2px;">
+								</ul>
+							</div>
 							<button class="scheduler-button" size="6">Save Vitals</button>
 						</div>
 					</div>
