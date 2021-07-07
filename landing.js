@@ -54,33 +54,108 @@ function loadMap() {
 	xhttp.send(); 
 }
 
-function dump(obj) {
+Array.prototype.peekBack = function() {
+    return this[this.length - 1];
+}
+
+Array.prototype.swap = function (x,y) {
+  var b = this[x];
+  this[x] = this[y];
+  this[y] = b;
+  return this;
+}
+
+function pickup(html) {
+	var parsed = [];
+	var lines = html.substring(7, html.length - 9).split("<!---->"); //badness
+	lines.forEach(function(x) {
+		const regex = /<tr><td.*class="(.*)">(?:\<strong>)?(.*)(?:\<\/strong>)?<\/td><\/tr>/;
+		let match = x.match(regex);
+		var sub = match[2].match(/(.*)<\/strong>/);
+		if(sub)
+			match[2] = sub[1];
+		//print class + data;
+		parsed.push({"type": String(match[1]), "value": String(match[2])});
+	});
+	
+	parsed = parsed.slice(1, -1);
+	parsed.forEach(x => console.log(x.type, x.value));
+
+	var i = 0;
+	var data = new Object({});
+	var stack = Array();
+	stack.push(data);
+	
+	while(i < parsed.length) {
+		var cur_obj = stack.peekBack();
+		var cur_type = parsed[i].type;
+		var cur_val  = parsed[i].value;
+		console.log(cur_type, cur_val, i);
+		
+		switch(String(cur_type)) {
+			case "obj"      : stack.push({});
+							  cur_obj[parsed[i].value] = stack.peekBack(); //create and descend
+							  i += 2;
+							  break;
+			case "arr"      : stack.push([]);
+							  cur_obj[parsed[i].value] = stack.peekBack(); //create and descend
+							  i += 2;
+							  break;
+			case "obj-end"  : 
+			case "arr-end"  : stack.pop();
+							  cur_obj = stack.peekBack();
+							  i++;
+							  break;
+			case "prim"     : cur_obj[cur_val] = parsed[i + 1].value;
+							  i += 2;
+							  break;
+			case "data"     : cur_obj.push(cur_val);
+							  i++;
+							  break;
+		}
+	}
+	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML; // i don't know if this causes a race condition
+	name = name.split(" ");
+	name = "data-" + name[0] + "-" + name[1];
+	patient_data[name] = data;
+}
+
+function dump(obj, editable) {
 	if(typeof obj !== 'object') //base case: we're a primitive
-		return "<tr><td>" + obj + "</td></tr>";
+		return "<tr><td " + (editable ? "contenteditable" : "") + " onblur=\"saveAndRegenerate()\" class=\"data\">" + obj + "</td></tr><!---->";
 	else if(Array.isArray(obj)) {
-		var ret = "";
+		var ret = "<tr><td class=\"arr-start\"></td></tr><!---->"
 		obj.forEach(function(x) {
-			ret += dump(x);
+			ret += dump(x, true); //not strictly necessary, but good to be consistent
 		});
-		return ret;
+		return ret + "<tr><td class=\"arr-end\"></td></tr><!---->";
 	}
 	else { 
-		var ret = "";
+		var ret = "<tr><td class=\"obj-start\"></td></tr><!---->";
 		Object.keys(obj).forEach(function(x) {
-			ret += "<tr><td><strong>" + x + "</strong></td></tr>";
-			ret += dump(obj[x]);
+			//provide the parser information on save
+			var c = (typeof obj[x] !== 'object') ? "prim" : (Array.isArray(obj[x]) ? "arr" : "obj");
+			ret += "<tr><td class=\"" + c + "\"><strong>" + x + "</strong></td></tr><!---->";
+			ret += dump(obj[x], (x === "name" ? false : true));
 		});
+		return ret + "<tr><td class=\"obj-end\"></td></tr><!---->";
 	}
-	return ret;
+}
+
+function saveAndRegenerate() {
+	pickup(document.getElementById("data-table").innerHTML);
+	reloadDataViewer(null);
 }
 
 function reloadDataViewer(name) {
+	if(!name)
+		name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML; // i don't know if this causes a race condition
 	name = name.split(" ");
 	name = "data-" + name[0] + "-" + name[1];
 	var data = patient_data[name];
 	
 	var table = document.getElementById("data-table");
-	var table_html = dump(data);
+	var table_html = dump(data, false);
 	
 	//replace the linked images with links
 	table_html = table_html.replace(/<td>(ICU\/patientdata\/.*?)<\/td>/g, function(base, path) {
