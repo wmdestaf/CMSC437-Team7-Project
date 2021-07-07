@@ -120,13 +120,13 @@ function pickup(html) {
 	patient_data[name] = data;
 }
 
-function dump(obj, editable) {
+function dump(obj, editable, blacklist) {
 	if(typeof obj !== 'object') //base case: we're a primitive
 		return "<tr><td " + (editable ? "contenteditable" : "") + " onblur=\"saveAndRegenerate()\" class=\"data\">" + obj + "</td></tr><!---->";
 	else if(Array.isArray(obj)) {
 		var ret = "<tr><td class=\"arr-start\"></td></tr><!---->"
 		obj.forEach(function(x) {
-			ret += dump(x, true); //not strictly necessary, but good to be consistent
+			ret += dump(x, editable, blacklist); //not strictly necessary, but good to be consistent
 		});
 		return ret + "<tr><td class=\"arr-end\"></td></tr><!---->";
 	}
@@ -136,7 +136,8 @@ function dump(obj, editable) {
 			//provide the parser information on save
 			var c = (typeof obj[x] !== 'object') ? "prim" : (Array.isArray(obj[x]) ? "arr" : "obj");
 			ret += "<tr><td class=\"" + c + "\"><strong>" + x + "</strong></td></tr><!---->";
-			ret += dump(obj[x], (x === "name" ? false : true));
+			var editable = !(blacklist.includes(x));
+			ret += dump(obj[x], editable, blacklist);
 		});
 		return ret + "<tr><td class=\"obj-end\"></td></tr><!---->";
 	}
@@ -155,7 +156,8 @@ function reloadDataViewer(name) {
 	var data = patient_data[name];
 	
 	var table = document.getElementById("data-table");
-	var table_html = dump(data, false);
+	const blacklist = ["name", "saved-images"];
+	var table_html = dump(data, true, blacklist);
 	
 	//replace the linked images with links
 	table_html = table_html.replace(/<td>(ICU\/patientdata\/.*?)<\/td>/g, function(base, path) {
