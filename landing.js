@@ -194,11 +194,6 @@ function reloadDataViewer(name) {
 	else
 		name = cvtName(name);
 	
-	/*
-	if(name.endsWith("-undefined")) //i am not proud of this
-		name = name.substring(0, name.length - "-undefined".length);
-	*/
-	
 	var data = patient_data[name];
 	if(!data)
 		return;
