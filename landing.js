@@ -6,6 +6,8 @@ function logout() {
 var patient_names = undefined;
 var patient_data = undefined;
 var patient_map = undefined;
+var assigned_patient = undefined;
+var mode = undefined;
 			
 //this is ugly
 function loadNames() {
@@ -115,10 +117,24 @@ function pickup(html) {
 							  break;
 		}
 	}
-	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML; // i don't know if this causes a race condition
+	patient_data[getName(false)] = data;
+}
+
+function cvtName(name) {
 	name = name.split(" ");
-	name = "data-" + name[0] + "-" + name[1];
-	patient_data[name] = data;
+	return "data-" + name[0] + "-" + name[1];
+}
+
+function getName(dn_split) {
+	var name;
+	if(mode === "phys")
+		name = document.getElementById("patient_list").getElementsByClassName("selected")[0];
+	else
+		name = { "innerHTML": assigned_patient.replace("-", " ") } //jfc
+	
+	if(!name || dn_split)
+		return name;
+	return cvtName(name.innerHTML);
 }
 
 function dump(obj, editable, blacklist) {
@@ -151,11 +167,18 @@ function saveAndRegenerate() {
 
 function reloadDataViewer(name) {
 	if(!name)
-		name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML; // i don't know if this causes a race condition
-	name = name.split(" ");
-	name = "data-" + name[0] + "-" + name[1];
-	var data = patient_data[name];
+		name = getName(false);
+	else
+		name = cvtName(name);
 	
+	/*
+	if(name.endsWith("-undefined")) //i am not proud of this
+		name = name.substring(0, name.length - "-undefined".length);
+	*/
+	
+	var data = patient_data[name];
+	if(!data)
+		return;
 	var table = document.getElementById("data-table");
 	const blacklist = ["name", "information", "saved-images", "saved-vitals"];
 	var table_html = dump(data, true, blacklist);
@@ -184,10 +207,7 @@ function reloadDataViewer(name) {
 }
 
 function add_key() {
-	//THIS IS NOT DRY
-	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML;
-	name = name.split(" ");
-	name = "data-" + name[0] + "-" + name[1];
+	var name = getName(false);
 	
 	//validate key data
 	var key_box = document.getElementById("ktextval");
@@ -206,10 +226,7 @@ function add_key() {
 }
 
 function del_key() {
-	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML;
-	name = name.split(" ");
-	name = "data-" + name[0] + "-" + name[1];
-	
+	var name = getName(false);
 	//validate key data
 	var key_box = document.getElementById("ktextval");
 	if(!key_box.value) {
@@ -227,10 +244,7 @@ function del_key() {
 }
 
 function add_kv() {
-	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML;
-	name = name.split(" ");
-	name = "data-" + name[0] + "-" + name[1];
-	
+	var name = getName(false);
 	//validate key data
 	var key_box = document.getElementById("ktextval");
 	if(!key_box.value) {
@@ -253,9 +267,7 @@ function add_kv() {
 }
 
 function del_kv() {
-	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML;
-	name = name.split(" ");
-	name = "data-" + name[0] + "-" + name[1];
+	var name = getName(false);
 	
 	//validate key data
 	var key_box = document.getElementById("ktextval");
@@ -275,7 +287,7 @@ function del_kv() {
 
 function open_image() {
 	var img_box = document.getElementById("img-select-box");
-	if( (img_box.value ?? "ignore") != "ignore" )
+	if( (img_box.value ?? "ignore") !== "ignore" )
 		window.open(img_box.value, 'newwindow', 'width=300,height=300'); 
 }
 
@@ -285,21 +297,24 @@ function pad(n) {
 
 function save_vitals() {
 	var now = new Date();
-	var mm = pad(now.getDate());
-	var dd = pad(now.getDay());
+	var mo = pad(now.getMonth() + 1);
+	var dd = pad(now.getDate());
 	var yyyy = now.getFullYear();
 	var hh = pad(now.getHours());
 	var mm = pad(now.getMinutes());
 	var ss = pad(now.getSeconds());
 	
-	var selected_name = document.getElementById("patient_list").getElementsByClassName("selected")[0]; //field is mutex so ok
+	var selected_name = getName(true);
 	if(!selected_name) {
 		alert("No patient selected!");
 		return;
 	}
 	var old = selected_name.innerHTML; //whyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-	selected_name = old.split(" ");
-	selected_name = "data-" + selected_name[0] + "-" + selected_name[1];
+	selected_name = cvtName(old);
+	if(!(patient_data[selected_name])) {
+		alert("No patient assigned!");
+		return;
+	}
 		
 	var vital_signs = {
 		"hr":   vitals.getHR(),
@@ -308,7 +323,8 @@ function save_vitals() {
 		"Bpm":  vitals.getBRPM(),
 		"tmp":  vitals.getTmp(),
 	};
-	patient_data[selected_name]["saved-vitals"][mm + "-" + dd + "-" + yyyy + "|" + hh + ":" + mm + ":" + ss] = vital_signs;
+	
+	patient_data[selected_name]["saved-vitals"][mo + "-" + dd + "-" + yyyy + "|" + hh + ":" + mm + ":" + ss] = vital_signs;
 	
 	reloadDataViewer(old);
 }
@@ -322,42 +338,51 @@ $(document).ready(function(){
 	loadNames();
 	loadData();
 	loadMap();
+	assigned_patient = patient_map[cvtName(name ?? "Invalid User")] ?? ["User Unrecognized"]; 
+	assigned_patient = assigned_patient[0] ?? "User unassigned"; //this can be changed to allow one-to-many relationships later!
+	mode = window.location.pathname.split("/").pop().split(".").shift().split("_").shift();
 	
-	//load in the selection panel
-	var list = ""
-	patient_names.forEach(function(x) {
-		list += "<li>" + x + "</li>";
-	});
-	document.getElementById("patient_list").innerHTML = list;
-	
-	//repair the list by adding listeners
-	$("#patient_list li").on("click", function () {
-		$("#patient_list li").removeClass('selected');
-		$(this).attr('class', 'selected');
-		let patient_name = $(this).html();
-		$("#data-viewer-name").html("Patient name: " + patient_name);
-		reloadDataViewer(patient_name);
-	});
-	
-	$("#patient_list li").hover(function () {
-		$(this).addClass('hovered');
-	}, 
-	function () {
-		$(this).removeClass('hovered');
-	});
-	
-	//selection panel input box;
-	$(document).on('input', '#patient', function(){
-		const regex = new RegExp(this.value, 'ig');
-		let matches = Array(0);
-		let list = document.getElementById("patient_list").getElementsByTagName("li");
-		for(let x of list) {
-			if(x.innerHTML.match(regex))
-				x.style.display = "block";
-			else
-				x.style.display = "none";
-		}
-	});
+	if(mode === "phys") {
+		//load in the selection panel
+		var list = ""
+		patient_names.forEach(function(x) {
+			list += "<li>" + x + "</li>";
+		});
+		document.getElementById("patient_list").innerHTML = list;
+		
+		//repair the list by adding listeners
+		$("#patient_list li").on("click", function () {
+			$("#patient_list li").removeClass('selected');
+			$(this).attr('class', 'selected');
+			let patient_name = $(this).html();
+			$("#data-viewer-name").html("Patient name: " + patient_name);
+			reloadDataViewer(patient_name);
+		});
+		
+		$("#patient_list li").hover(function () {
+			$(this).addClass('hovered');
+		}, 
+		function () {
+			$(this).removeClass('hovered');
+		});
+		
+		//selection panel input box;
+		$(document).on('input', '#patient', function(){
+			const regex = new RegExp(this.value, 'ig');
+			let matches = Array(0);
+			let list = document.getElementById("patient_list").getElementsByTagName("li");
+			for(let x of list) {
+				if(x.innerHTML.match(regex))
+					x.style.display = "block";
+				else
+					x.style.display = "none";
+			}
+		});
+	}
+	else {
+		document.getElementById("data-viewer-name").innerHTML = "Patient name: " + assigned_patient;
+		reloadDataViewer(null);
+	}
 	
 	//edit panel input box
 	var el_box = document.getElementById("element-select-box");

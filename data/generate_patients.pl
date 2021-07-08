@@ -15,8 +15,6 @@ open (my $patient_list, '>', 'patient_list.txt')
 	or die "Could not open (patient_list.txt) for writing!"; 
 open (my $patient_data, '>', 'patient_data.json')
 	or die "Could not open (patient_data.json) for writing!"; 
-open (my $patient_map,  '>', 'patient_map.json')
-	or die "Could not open (patient_map.json) for writing!"; 
 
 `rm ../ICU/patientdata/*.png`;
 
@@ -26,7 +24,6 @@ close $fnh;
 close $lnh;
 
 print $patient_data "{\n";
-print $patient_map  "{\n";
 
 for(my $i = 0; $i < $ARGV[2]; ++$i) {
 	my $name = $first[rand(scalar @first)] . " " . $lasts[rand(scalar @lasts)];
@@ -37,17 +34,9 @@ for(my $i = 0; $i < $ARGV[2]; ++$i) {
 	if($i == $ARGV[2] - 1) {
 		$patient_json = substr($patient_json, 0, length($patient_json) - 2) . "\n";
 	}
-	
 	print $patient_data $patient_json;
-	#add patient data to map
-	$name =~ /^(\S+)(\s+)(\S+)$/;
-	print $patient_map "\"$1-$3\": [\n";
-	print $patient_map "]" . (($i == ($ARGV[2] - 1)) ? "\n" : ",\n");
 }
-
 print $patient_data "}\n";
-print $patient_map  "}\n";
 
 close $patient_list;
 close $patient_data;
-close $patient_map;

@@ -6,12 +6,11 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-		<script src="landing.js"></script>
+		<script async src="landing.js"></script>
 		<script async src="vitals.js"></script>
 		<script async src="devices.js"></script>
 
 		<style>
-
 			.content-bottom {
 				border: 1px solid red;
 			}
@@ -53,6 +52,7 @@
 
 			.scheduler-main{
 				height: 95%;
+				overflow: auto;
 			}
 
 			.scheduler-side{
@@ -65,6 +65,7 @@
 				height: 70%;
 				margin: 2px;
 				border: 1px solid black;
+				font-size: 0.8em;
 			}
 
 			.scheduler-button{
@@ -124,7 +125,6 @@
 
 			.devices-inner-block{
 				background-color: white;
-
 				overflow: auto;
 				position: relative;
 				height: 75%;
@@ -132,42 +132,84 @@
 				border: 1px solid black;
 				text-align: center;
 			}
+			
+			.selected {
+				background-color: green;
+			}
 		
+			.hovered {
+				color: #FFFF00;
+			}
+			
+			.main_table {
+				border: 1px solid black;
+				overflow: auto;
+			}
+			
+			.main_table tr {
+				border: 1px solid black;
+			}
 
 		</style>
 
 	</head>
 	<body>
 
-       	<h1 style="text-align: center;">Nurse Page</h1>
+        <h1 style="text-align: center;">Nurse Page</h1>
 		<h2 id="greeting" style="text-align: center;"></h2>
-		
+
 		<div class="container">
 			<div class="row justify-content-lg-center">
 				<!--Logout and schedule buttons-->
-				<div class="col-lg-1 top-left justify-content-lg-center">
-					<button onclick="logout()"<a href="login.html">Logout</a></button>
-					<br>
-					<button>Append to selected field</button>
-					<button>Edit selected field</button>
+				<div class="col-lg-5 top-left justify-content-lg-center" style="overflow: auto;">
+					<button onclick="logout()">Logout</button>
+					<button onclick="go_scheduler()">Open Shift Scheduler</button>
+					
+					<select id="element-select-box">
+						<option value="ignore">Select Element...</option>
+					</select>
+					
+					<div id="array-box">
+						<button onclick="add_key()" disabled id="addkbtn">Add Key</button>
+						<button onclick="del_key()" disabled id="delkbtn">Delete Key</button>
+					</div>
+					<div id="obj-box">
+						<button onclick="add_kv()" disabled id="addkvbtn">Add Key + Value</button>
+						<button onclick="del_kv()" disabled id="delkvbtn">Delete Key + Value</button>
+					</div>
+					<div id="input-box">
+						<label for="key-input">Key:</label>
+						<input disabled id="ktextval">
+						<br>
+						<label for="value-input">Value:</label>
+						<input disabled id="vtextval">
+					</div>
+					<div id="img-box">
+						<select id="img-select-box">
+							<option value="ignore">Select Image...</option>
+						</select>
+						<button onclick="open_image()">Open Image!</button>
+					</div>
 				</div>
 
 				<!--Data viewer and search-->
-				<div class="col-lg-4 top-mid">
+				<div class="col-lg-5 top-mid">
 					<div class="container" style="display: flex; margin: 5px;">
 						<p style="margin-right: 20px">Data viewer</p>
-						<p class="patient-name">Patient name: -name-</p>
+						<p class="patient-name" id="data-viewer-name">Patient name: -name-</p>
 					</div> 
 
 					<div class="scheduler">
 						<div class= "scheduler-main col-sm-8" style="border: 1px solid blue; float: left">
-							Test
+							<table id="data-table" class="main_table">
+							</table>
 						</div>
 						<div class= "scheduler-side col-sm-4" style="border: 1px solid red; float: right">
-							<button class="scheduler-button" size="6">Save Vitals</button>
+							<button class="scheduler-button" onclick="save_vitals()">Save Vitals</button>
 						</div>
 					</div>
 				</div>
+
 				<!--Patient vitals-->
 				<div class="col-lg-5 top-right">
 					<div class="vitals">
@@ -199,7 +241,7 @@
 
 				<div class="col-lg-3 devices-individual">
 					<div class="device-1" style="height: 250px;">
-						<p class="device-1-name" style="text-align: center;">Register a Device</p>
+						<p class="device-1-name" style="text-align: center;">Register a Device Slot 1</p>
 						<div class="devices-inner-block">Device: 
 							<span id="tool"></span>
 							<br><br>
@@ -211,7 +253,7 @@
 				</div>	
 				<div class="col-lg-3 devices-individual">
 					<div class="device-2" style="height: 250px;">
-						<<p class="device-1-name" style="text-align: center;">Register a Device</p>
+						<p class="device-1-name" style="text-align: center;">Register a Device Slot 2</p>
 						<div class="devices-inner-block">Device:
 							<span id="tool2"></span>
 							<br><br>
@@ -223,7 +265,7 @@
 				</div>
 				<div class="col-lg-3 devices-individual">
 					<div class="device-3" style="height: 250px;">
-						<p class="device-1-name" style="text-align: center;">Register a Device</p>
+						<p class="device-1-name" style="text-align: center;">Register a Device Slot 3</p>
 						<div class="devices-inner-block">Device:
 							<span id="tool3"></span>
 							<br><br>
