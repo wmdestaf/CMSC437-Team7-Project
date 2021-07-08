@@ -1,6 +1,29 @@
 function logout() {
-	sessionStorage.clear();
-	window.location.replace("login.html");
+	//uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+	$.ajax({
+		type: "POST",
+		url: 'writer.php',
+		dataType: 'html',
+		data: { "to": "data/patient_map.json", "data": JSON.stringify(patient_map) }
+	}).done(function () {
+		$.ajax({
+			type: "POST",
+			url: 'writer.php',
+			dataType: 'html',
+			data: { "to": "data/patient_data.json", "data": JSON.stringify(patient_data) }
+		}).done(function () {
+			sessionStorage.clear();
+			window.location.replace("login.html");
+		}).fail(function ( jqXHR, textStatus, errorThrown ) {
+			console.log(jqXHR);
+			console.log(textStatus);
+			console.log(errorThrown);
+		});
+	}).fail(function ( jqXHR, textStatus, errorThrown ) {
+		console.log(jqXHR);
+		console.log(textStatus);
+		console.log(errorThrown);
+	});
 }
 
 var patient_names = undefined;
