@@ -12,6 +12,13 @@
 
 		<style>
 
+			.container{
+				max-width: 1920px;
+				min-width: 600px;
+				margin-right: auto;
+				margin-left: auto;
+			}
+
 			.content-bottom {
 				border: 1px solid red;
 			}
@@ -47,6 +54,12 @@
 				padding-right: 10px;
 			}
 
+			.element-select-box{
+				overflow: auto;
+				position: relative;
+				width: 150px;
+			}
+
 			.scheduler{
 				height:300px;
 			}
@@ -70,7 +83,8 @@
 			}
 
 			.scheduler-button{
-				width: 80px;
+				width: auto;
+				font-size: 0.8em;
 			}
 			
 
@@ -90,7 +104,15 @@
 				color: white;
 			}
 
-			button {
+			.button-horizontal {
+				align-content: center;
+				display: inline;
+				width: 100px;
+				font-size: 12px;
+				margin: 5px;
+			}
+
+			.button-vertical {
 				align-content: center;
 				display: block;
 				width: 65px;
@@ -100,18 +122,17 @@
 
 			.devices-buttons-holder{
 				margin: 5px;
-
-				display: flex;
+				display: inline;
 				justify-content: center;
 				flex-direction: column;
 			}
 
 			.devices-buttons{
 				align-content: center;
-				display: block;
-				width: 150px;
+				display: inline;
+				width: 100px;
 				margin: 5px;
-				font-size: 18px;
+				font-size: 14px;
 			}
 			
 			.devices-individual{
@@ -121,7 +142,6 @@
 				background-color: rgba(150, 150, 150, 0.5);
 				border: 1px solid black;
 				margin: 5px;
-				height: 250px;
 			}
 
 			.devices-inner-block{
@@ -160,23 +180,26 @@
 		<h2 id="greeting" style="text-align: center;"></h2>
 
 		<div class="container">
-			<div class="row justify-content-lg-center">
+			<div class="row justify-content-lg-center" style="margin: 0px">
 				<!--Logout and schedule buttons-->
-				<div class="col-lg-5 top-left justify-content-lg-center" style="overflow: auto;">
-					<button onclick="logout()">Logout</button>
-					<button onclick="go_scheduler()">Open Shift Scheduler</button>
-					
-					<select id="element-select-box">
-						<option value="ignore">Select Element...</option>
-					</select>
-					
+				<div class="col-lg-2 top-left justify-content-lg-center" style="overflow: auto; text-align: center;">
+					<div style="text-align: center;">
+						<button class="button-horizontal" onclick="logout()">Logout</button>
+						<button onclick="go_scheduler()" class="button-horizontal" >Open Shift Scheduler</button>
+					</div>
+					<div style="text-align: center; margin: 5px;">
+						<select style="width: 175px; text-align: center;" id="element-select-box">
+							<option value="ignore">Select Element...</option>
+						</select>
+					</div>
 					<div id="array-box">
-						<button onclick="add_key()" disabled id="addkbtn">Add Key</button>
-						<button onclick="del_key()" disabled id="delkbtn">Delete Key</button>
+						<button class="button-horizontal" onclick="add_key()" disabled id="addkbtn">Add Key</button>
+						<button class="button-horizontal" onclick="add_kv()" disabled id="addkvbtn">Add Key + Value</button>
+						<button class="button-horizontal" onclick="del_key()" disabled id="delkbtn">Del Key</button>
+						<button class="button-horizontal" onclick="del_kv()" disabled id="delkvbtn">Del Key + Value</button>
 					</div>
 					<div id="obj-box">
-						<button onclick="add_kv()" disabled id="addkvbtn">Add Key + Value</button>
-						<button onclick="del_kv()" disabled id="delkvbtn">Delete Key + Value</button>
+
 					</div>
 					<div id="input-box">
 						<label for="key-input">Key:</label>
@@ -189,12 +212,12 @@
 						<select id="img-select-box">
 							<option value="ignore">Select Image...</option>
 						</select>
-						<button onclick="open_image()">Open Image!</button>
+						<button class="button-horizontal" onclick="open_image()">Open Image!</button>
 					</div>
 				</div>
 
 				<!--Data viewer and search-->
-				<div class="col-lg-5 top-mid">
+				<div class="col-lg-4 top-mid">
 					<div class="container" style="display: flex; margin: 5px;">
 						<p style="margin-right: 20px">Data viewer</p>
 						<p class="patient-name" id="data-viewer-name">Patient name: -name-</p>
@@ -205,8 +228,8 @@
 							<table id="data-table" class="main_table">
 							</table>
 						</div>
-						<div class= "scheduler-side col-sm-4" style="border: 1px solid red; float: right">
-							<span><input type="text" id="patient" size="5" style="margin: 5px;"/></span>
+						<div class= "scheduler-side col-sm-4" style="border: 1px solid red; float: right; text-align: center">
+							<span><input type="text" id="patient" size="10" style="margin: 5px;"/></span>
 							<div class="scheduler-names" style="background-color: #333333; color: white;">
 								<ul id="patient_list" style="list-style-type: none; white-space: nowrap; padding: 2px;">
 								</ul>
@@ -217,7 +240,7 @@
 				</div>
 
 				<!--Patient vitals-->
-				<div class="col-lg-5 top-right">
+				<div class="col-lg-4 top-right">
 					<div class="vitals">
 						<p style="margin: 5px;">Patient Vitals</p>
 						<canvas id="my_canvas" width="450" height="300">Canvas not supported</canvas>
@@ -227,8 +250,8 @@
 		</div>
 		<br>
 		<div class="container">
-			<div class="row justify-content-lg-center" style="border: 2px solid black; display: flex;">
-				<div class="col-lg-2 devices-buttons-holder">
+			<div class="row justify-content-lg-center" style="display: flex;">
+				<div class="col-lg-2 devices-buttons-holder" style="border: 2px solid black; text-align: center; padding: 20px;">
 					<label for="positions">Select Position:</label>
 					<select id="positions">
 						<option value="one">One</option>
@@ -245,7 +268,7 @@
 					<button class="devices-buttons" onclick="unregister_device()">Unregister Selected Device</button>
 				</div>
 
-				<div class="col-lg-3 devices-individual">
+				<div class="col-lg-2 devices-individual">
 					<div class="device-1" style="height: 250px;">
 						<p class="device-1-name" style="text-align: center;">Register a Device Slot 1</p>
 						<div class="devices-inner-block">Device: 
@@ -257,8 +280,8 @@
 						</div>
 					</div>
 				</div>	
-				<div class="col-lg-3 devices-individual">
-					<div class="device-2" style="height: 250px;">
+				<div class="col-lg-2 devices-individual">
+					<div class="device-2" style="height: 250px">
 						<p class="device-1-name" style="text-align: center;">Register a Device Slot 2</p>
 						<div class="devices-inner-block">Device:
 							<span id="tool2"></span>
@@ -269,7 +292,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-3 devices-individual">
+				<div class="col-lg-2 devices-individual">
 					<div class="device-3" style="height: 250px;">
 						<p class="device-1-name" style="text-align: center;">Register a Device Slot 3</p>
 						<div class="devices-inner-block">Device:
