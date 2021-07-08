@@ -65,11 +65,12 @@ Array.prototype.swap = function (x,y) {
   return this;
 }
 
+//fun fact, this is a complete BNF grammar
 function pickup(html) {
 	var parsed = [];
 	var lines = html.substring(7, html.length - 9).split("<!---->"); //badness
 	lines.forEach(function(x) {
-		const regex = /<tr><td.*class="(.*)">(?:\<strong>)?(.*)(?:\<\/strong>)?<\/td><\/tr>/;
+		const regex = /<tr><td.*class=".*delim (.*)">(?:\<strong>)?(.*)(?:\<\/strong>)?<\/td><\/tr>/;
 		let match = x.match(regex);
 		var sub = match[2].match(/(.*)<\/strong>/);
 		if(sub)
@@ -122,24 +123,24 @@ function pickup(html) {
 
 function dump(obj, editable, blacklist) {
 	if(typeof obj !== 'object') //base case: we're a primitive
-		return "<tr><td " + (editable ? "contenteditable" : "") + " onblur=\"saveAndRegenerate()\" class=\"data\">" + obj + "</td></tr><!---->";
+		return "<tr><td " + (editable ? "contenteditable" : "") + " onblur=\"saveAndRegenerate()\" class=\"delim data\">" + obj + "</td></tr><!---->";
 	else if(Array.isArray(obj)) {
-		var ret = "<tr><td class=\"arr-start\"></td></tr><!---->"
+		var ret = "<tr><td class=\"delim arr-start\"></td></tr><!---->"
 		obj.forEach(function(x) {
-			ret += dump(x, editable, blacklist); //not strictly necessary, but good to be consistent
+			ret += dump(x, editable, blacklist);
 		});
-		return ret + "<tr><td class=\"arr-end\"></td></tr><!---->";
+		return ret + "<tr><td class=\"delim arr-end\"></td></tr><!---->";
 	}
 	else { 
-		var ret = "<tr><td class=\"obj-start\"></td></tr><!---->";
+		var ret = "<tr><td class=\"delim obj-start\"></td></tr><!---->";
 		Object.keys(obj).forEach(function(x) {
 			//provide the parser information on save
 			var c = (typeof obj[x] !== 'object') ? "prim" : (Array.isArray(obj[x]) ? "arr" : "obj");
-			ret += "<tr><td class=\"" + c + "\"><strong>" + x + "</strong></td></tr><!---->";
+			ret += "<tr><td class=\"delim " + c + "\"><strong>" + x + "</strong></td></tr><!---->";
 			var editable = !(blacklist.includes(x));
 			ret += dump(obj[x], editable, blacklist);
 		});
-		return ret + "<tr><td class=\"obj-end\"></td></tr><!---->";
+		return ret + "<tr><td class=\"delim obj-end\"></td></tr><!---->";
 	}
 }
 
@@ -156,15 +157,126 @@ function reloadDataViewer(name) {
 	var data = patient_data[name];
 	
 	var table = document.getElementById("data-table");
-	const blacklist = ["name", "saved-images"];
+	const blacklist = ["name", "information", "saved-images", "saved-vitals"];
 	var table_html = dump(data, true, blacklist);
 	
-	//replace the linked images with links
-	table_html = table_html.replace(/<td>(ICU\/patientdata\/.*?)<\/td>/g, function(base, path) {
-		let oc = "onclick=\"window.open('" + path + "', 'newwindow', 'width=300,height=300'); return false;\"";
-		return "<td><a href=\"" + path + "\" " + oc + ">" + path + "</a></td>";
+	//populate the element selector with top-level arrays and objects
+	var el_box = document.getElementById("element-select-box");
+	var inner = "<option value=\"ignore\">Select Element...</option>";
+	Object.keys(data).forEach(function(x) {
+		if(typeof data[x] === 'object' && !blacklist.includes(x)) {
+			let full = x + " " + (Array.isArray(data[x]) ? "(array)" : "(object)");
+			inner += "<option value=\"" + full + "\">" + full + " " + "</option>"; //oh boy more clientside validation
+		}
 	});
+	el_box.innerHTML = inner;
+	
+	//add all images to image selector
+	var img_box = document.getElementById("img-select-box");
+	var imgs = "";
+	var matches = table_html.matchAll(/(ICU\/patientdata\/.*?)<\/td>/g);
+	for(let x of matches) {
+		imgs += "<option value=\"" + x[1] + "\">" + x[1] + "</option>";
+	}
+	img_box.innerHTML = imgs;
+
 	table.innerHTML = table_html;
+}
+
+function add_key() {
+	//THIS IS NOT DRY
+	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML;
+	name = name.split(" ");
+	name = "data-" + name[0] + "-" + name[1];
+	
+	//validate key data
+	var key_box = document.getElementById("ktextval");
+	if(!key_box.value) {
+		alert("Empty key!");
+		return;
+	}
+	
+	let super_key = document.getElementById("element-select-box").value.match(/(.*)\(.*\)/)[1].trim();
+	if( (patient_data[name][super_key]).includes(key_box.value)) {
+		alert("Key exists!");
+		return;
+	}
+	(patient_data[name][super_key]).push(key_box.value);
+	reloadDataViewer(null);
+}
+
+function del_key() {
+	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML;
+	name = name.split(" ");
+	name = "data-" + name[0] + "-" + name[1];
+	
+	//validate key data
+	var key_box = document.getElementById("ktextval");
+	if(!key_box.value) {
+		alert("Empty key!");
+		return;
+	}
+	
+	let super_key = document.getElementById("element-select-box").value.match(/(.*)\(.*\)/)[1].trim();
+	if( !( (patient_data[name][super_key]).includes(key_box.value) )) {
+		alert("Key does not exist!");
+		return;
+	}
+	(patient_data[name][super_key]).splice( (patient_data[name][super_key]).indexOf(key_box.value), 1);
+	reloadDataViewer(null);
+}
+
+function add_kv() {
+	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML;
+	name = name.split(" ");
+	name = "data-" + name[0] + "-" + name[1];
+	
+	//validate key data
+	var key_box = document.getElementById("ktextval");
+	if(!key_box.value) {
+		alert("Empty key!");
+		return;
+	}
+	var val_box = document.getElementById("vtextval");
+	if(!val_box.value) {
+		alert("Empty value!");
+		return;
+	}
+	
+	let super_key = document.getElementById("element-select-box").value.match(/(.*)\(.*\)/)[1].trim();
+	if( (patient_data[name][super_key][key_box.value]) ) {
+		alert("Key exists!");
+		return;
+	}
+	patient_data[name][super_key][key_box.value] = val_box.value;
+	reloadDataViewer(null);
+}
+
+function del_kv() {
+	var name = document.getElementById("patient_list").getElementsByClassName("selected")[0].innerHTML;
+	name = name.split(" ");
+	name = "data-" + name[0] + "-" + name[1];
+	
+	//validate key data
+	var key_box = document.getElementById("ktextval");
+	if(!key_box.value) {
+		alert("Empty key!");
+		return;
+	}
+	
+	let super_key = document.getElementById("element-select-box").value.match(/(.*)\(.*\)/)[1].trim();
+	if( !(patient_data[name][super_key][key_box.value]) ) {
+		alert("Key does not exist!");
+		return;
+	}
+	delete patient_data[name][super_key][key_box.value];
+	reloadDataViewer(null);
+}
+
+function open_image() {
+	var img_box = document.getElementById("img-select-box");
+	if( (img_box.value ?? "ignore") != "ignore" )
+		window.open(img_box.value, 'newwindow', 'width=300,height=300'); 
 }
 
 function pad(n) {
@@ -180,7 +292,7 @@ function save_vitals() {
 	var mm = pad(now.getMinutes());
 	var ss = pad(now.getSeconds());
 	
-	var selected_name = document.getElementById("patient_list").getElementsByClassName("selected")[0]; //there is only 1 at a time
+	var selected_name = document.getElementById("patient_list").getElementsByClassName("selected")[0]; //field is mutex so ok
 	if(!selected_name) {
 		alert("No patient selected!");
 		return;
@@ -244,6 +356,42 @@ $(document).ready(function(){
 				x.style.display = "block";
 			else
 				x.style.display = "none";
+		}
+	});
+	
+	//edit panel input box
+	var el_box = document.getElementById("element-select-box");
+	el_box.addEventListener("change", function() {
+		let mode = this.value.match(/.*\((.*)\)/);
+		if(!mode)
+			return;
+		mode = mode[1];
+		
+		//this could be better accomplished by using a querySelector
+		var addkbtn  = document.getElementById("addkbtn");
+		var delkbtn  = document.getElementById("delkbtn");
+		var addkvbtn = document.getElementById("addkvbtn");
+		var delkvbtn = document.getElementById("delkvbtn");
+		var ktextval = document.getElementById("ktextval");
+		var vtextval = document.getElementById("vtextval");
+		
+		addkbtn.disabled  = true;
+		delkbtn.disabled  = true;
+		addkvbtn.disabled = true;
+		delkvbtn.disabled = true;
+		ktextval.disabled = true;
+		vtextval.disabled = true;
+		
+		if(mode === "object") {
+			addkvbtn.removeAttribute("disabled");
+			delkvbtn.removeAttribute("disabled");
+			ktextval.removeAttribute("disabled");
+			vtextval.removeAttribute("disabled");
+		} 
+		else if(mode === "array") {
+			addkbtn.removeAttribute("disabled");
+			delkbtn.removeAttribute("disabled");
+			ktextval.removeAttribute("disabled");
 		}
 	});
 });

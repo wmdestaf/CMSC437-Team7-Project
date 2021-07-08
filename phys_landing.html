@@ -148,14 +148,6 @@
 			.main_table tr {
 				border: 1px solid black;
 			}
-			
-			#this doesn't work. why?
-			.obj-start
-			.obj-end
-			.arr-start
-			.arr-end {
-				display: none;
-			}
 
 		</style>
 
@@ -168,12 +160,35 @@
 		<div class="container">
 			<div class="row justify-content-lg-center">
 				<!--Logout and schedule buttons-->
-				<div class="col-lg-1 top-left justify-content-lg-center">
-					<button onclick="logout()"<a href="login.html">Logout</a></button>
-					<br>
-					<a href='phys_schedule.html'><button>Open Shift Scheduler</button></a>
-					<button>Append to selected field</button>
-					<button>Edit selected field</button>
+				<div class="col-lg-5 top-left justify-content-lg-center" style="overflow: auto;">
+					<button onclick="logout()">Logout</button>
+					<button onclick="go_scheduler()">Open Shift Scheduler</button>
+					
+					<select id="element-select-box">
+						<option value="ignore">Select Element...</option>
+					</select>
+					
+					<div id="array-box">
+						<button onclick="add_key()" disabled id="addkbtn">Add Key</button>
+						<button onclick="del_key()" disabled id="delkbtn">Delete Key</button>
+					</div>
+					<div id="obj-box">
+						<button onclick="add_kv()" disabled id="addkvbtn">Add Key + Value</button>
+						<button onclick="del_kv()" disabled id="delkvbtn">Delete Key + Value</button>
+					</div>
+					<div id="input-box">
+						<label for="key-input">Key:</label>
+						<input disabled id="ktextval">
+						<br>
+						<label for="value-input">Value:</label>
+						<input disabled id="vtextval">
+					</div>
+					<div id="img-box">
+						<select id="img-select-box">
+							<option value="ignore">Select Image...</option>
+						</select>
+						<button onclick="open_image()">Open Image!</button>
+					</div>
 				</div>
 
 				<!--Data viewer and search-->
@@ -189,12 +204,12 @@
 							</table>
 						</div>
 						<div class= "scheduler-side col-sm-4" style="border: 1px solid red; float: right">
-							<span><input type="text" id="patient" size="5" style="margin: 5px;"></input></span>
+							<span><input type="text" id="patient" size="5" style="margin: 5px;"/></span>
 							<div class="scheduler-names" style="background-color: #333333; color: white;">
 								<ul id="patient_list" style="list-style-type: none; white-space: nowrap; padding: 2px;">
 								</ul>
 							</div>
-							<button class="scheduler-button" onclick="save_vitals()" size="6">Save Vitals</button>
+							<button class="scheduler-button" onclick="save_vitals()">Save Vitals</button>
 						</div>
 					</div>
 				</div>
