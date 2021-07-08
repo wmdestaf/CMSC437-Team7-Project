@@ -42,6 +42,8 @@
 				padding-left: 10px;
 				padding-right: 10px;
 
+						min-width: 480px;
+
 				display: flex;
 				flex-direction: column;
 			}
@@ -49,6 +51,8 @@
 			.top-right{
 				margin: 3px;
 				border: 2px solid black;
+
+				min-width: 480px;
 
 				padding-left: 10px;
 				padding-right: 10px;
@@ -216,11 +220,11 @@
 					</div> 
 
 					<div class="scheduler">
-						<div class= "scheduler-main col-sm-8" style="border: 1px solid blue; float: left">
+						<div class= "scheduler-main col-md-8" style="border: 1px solid blue; float: left">
 							<table id="data-table" class="main_table">
 							</table>
 						</div>
-						<div class= "scheduler-side col-sm-4" style="border: 1px solid red; float: right; text-align: center">
+						<div class= "scheduler-side col-xs-4" style="border: 1px solid red; float: right; text-align: center">
 							<span><input type="text" id="patient" size="10" style="margin: 5px;"/></span>
 							<div class="scheduler-names" style="background-color: #333333; color: white;">
 								<ul id="patient_list" style="list-style-type: none; white-space: nowrap; padding: 2px;">
@@ -233,7 +237,7 @@
 
 				<!--Patient vitals-->
 				<div class="col-lg-4 top-right">
-					<div class="vitals">
+					<div class="vitals" style="text-align: center;">
 						<p style="margin: 5px;">Patient Vitals</p>
 						<canvas id="my_canvas" width="450" height="300">Canvas not supported</canvas>
 					</div>
