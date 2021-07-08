@@ -8,6 +8,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 		<script src="landing.js"></script>
 		<script async src="vitals.js"></script>
+		<script async src="devices.js"></script>
 
 		<style>
 
@@ -129,6 +130,7 @@
 				height: 75%;
 				margin: 2px;
 				border: 1px solid black;
+				text-align: center;
 			}
 		
 
@@ -179,26 +181,56 @@
 		<div class="container">
 			<div class="row justify-content-lg-center" style="border: 2px solid black; display: flex;">
 				<div class="col-lg-2 devices-buttons-holder">
-					<button class="devices-buttons">Register Device At Position</button>
-					<button class="devices-buttons">Unregister Selected Device</button>
+					<label for="positions">Select Position:</label>
+					<select id="positions">
+						<option value="one">One</option>
+						<option value="two">Two</option>
+						<option value="three">Three</option>
+					</select>
+					<label for="devices">Select Devices:</label>
+					<select id="devices">
+						<option value="ventilator">Ventilator</option>
+						<option value="infusion">Infustion Pump</option>
+						<option value="syringe">Syringe Pump</option>
+					</select>
+					<button class="devices-buttons" onclick="register_device()">Register Device At Position</button>
+					<button class="devices-buttons" onclick="unregister_device()">Unregister Selected Device</button>
 				</div>
 
 				<div class="col-lg-3 devices-individual">
 					<div class="device-1" style="height: 250px;">
 						<p class="device-1-name" style="text-align: center;">Register a Device</p>
-						<div class="devices-inner-block">Device Contents go here</div>
+						<div class="devices-inner-block">Device: 
+							<span id="tool"></span>
+							<br><br>
+							<span id = tool-description></span>
+							<br><br>
+							<span id = tool-description2></span>
+						</div>
 					</div>
 				</div>	
 				<div class="col-lg-3 devices-individual">
 					<div class="device-2" style="height: 250px;">
-						<p class="device-1-name" style="text-align: center;">Register a Device</p>
-						<div class="devices-inner-block">Device Contents go here</div>
+						<<p class="device-1-name" style="text-align: center;">Register a Device</p>
+						<div class="devices-inner-block">Device:
+							<span id="tool2"></span>
+							<br><br>
+							<span id = tool-description3></span>
+							<br><br>
+							<span id = tool-description4></span>
+						</div>
 					</div>
 				</div>
 				<div class="col-lg-3 devices-individual">
 					<div class="device-3" style="height: 250px;">
 						<p class="device-1-name" style="text-align: center;">Register a Device</p>
-						<div class="devices-inner-block">Device Contents go here</div>
+						<div class="devices-inner-block">Device:
+							<span id="tool3"></span>
+							<br><br>
+							<span id = tool-description5></span>
+							<br><br>
+							<span id = tool-description6></span>
+						</div>
 					</div>
 				</div>
 			</div>
