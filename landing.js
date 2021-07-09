@@ -13,7 +13,6 @@ function saveAndCallback(f) {
 		return;
 	}
 	
-	
 	$.ajax({
 		type: "POST",
 		url: 'writer.php',
