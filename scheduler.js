@@ -2,12 +2,13 @@ function save() {
 	//ensure we don't try to make an ajax request if we don't have write capability
 	if(window.sessionStorage.getItem("patient_list") ||  window.sessionStorage.getItem("patient_map")) {
 		var serial = "";
-		console.log(Array.isArray(patient_names));
 		patient_names.forEach(function(x) {
 			serial += (x + "\n");
 		});
 		window.sessionStorage.setItem("patient_list", serial);
 		window.sessionStorage.setItem("patient_map", JSON.stringify(patient_map));
+		saved = true;
+		alert("Saved OK");
 		return;
 	}
 	
