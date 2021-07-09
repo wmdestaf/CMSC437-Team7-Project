@@ -10,22 +10,42 @@
 		
 		<style>
 			#scheduler {
-				border: 3px solid black;
+				border: 2px solid gray;
 				margin-top: 50px;
 				margin-left: 0px;
 				padding: 10px;
-				background-color: white;
+				background-color: rgba(150, 150, 150, 0.6);;
 			}
+
+			body {
+                background-image: url('hospital_bg.jpg');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-position: center;
+				background-blend-mode: overlay;
+				background-color: rgb(221, 227, 238);
+            }
+			
+			button{
+
+				margin: 5px;
+
+			}
+
 		</style>
 	</head>
-	<body style="background-color: powderblue">
+	<body>
 		<h1 class="text-center">Physician Scheduler</h1>
 		<div class="row form-group">
-			<div class="col-lg-8 offset-lg-2">
+			<div class="col-lg-2 offset-lg-2" style="overflow: auto; text-align: center;">
 				<div id="scheduler" class="text-center">
 					<button onclick="save()">Save</button>
 					<button onclick="go_back()">Return to Physician Workspace</button>
 					<button onclick="logout()">Logout</button>
+				</div>
+			</div>
+			<div class="col-lg-6" style="overflow: auto; text-align: center;">
+				<div id="scheduler" class="text-center">
 					<label for="nurses">Nurse</label>
 					<select id="nurses">
 						<option id="ignore">Select Nurse...</option>
