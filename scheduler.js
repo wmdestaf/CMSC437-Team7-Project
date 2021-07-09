@@ -1,4 +1,16 @@
 function save() {
+	//ensure we don't try to make an ajax request if we don't have write capability
+	if(window.sessionStorage.getItem("patient_list") ||  window.sessionStorage.getItem("patient_map")) {
+		var serial = "";
+		console.log(Array.isArray(patient_names));
+		patient_names.forEach(function(x) {
+			serial += (x + "\n");
+		});
+		window.sessionStorage.setItem("patient_list", serial);
+		window.sessionStorage.setItem("patient_map", JSON.stringify(patient_map));
+		return;
+	}
+	
 	$.ajax({
 		type: "POST",
 		url: 'writer.php',
@@ -18,7 +30,7 @@ function save() {
 function logout() {
 	if(!saved && !confirm("Unsaved data. Are you sure you want to return?"))
 		return;
-	sessionStorage.clear();
+	sessionStorage.removeItem("name");
 	window.location.replace("login.html");
 }
 
@@ -34,6 +46,12 @@ var patient_names = undefined;
 var patient_map = undefined;
 
 function loadMap() {
+	var map;
+	if(map = window.sessionStorage.getItem("patient_map")) {
+		patient_map = JSON.parse(map);
+		return;
+	}
+	
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if(this.readyState == 4 && this.status == 200) { 
@@ -49,6 +67,12 @@ function loadMap() {
 }
 
 function loadNames() {
+	var list;
+	if(list = window.sessionStorage.getItem("patient_list")) { //exists
+		(patient_names = list.split("\n")).pop();
+		return;
+	}
+	
 	//load in patient information
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {

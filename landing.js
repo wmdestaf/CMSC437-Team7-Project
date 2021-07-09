@@ -1,5 +1,19 @@
 function saveAndCallback(f) {
-	//uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+	//ensure we don't try to make an ajax request if we don't have write capability
+	if(window.sessionStorage.getItem("patient_list") || window.sessionStorage.getItem("patient_data") || window.sessionStorage.getItem("patient_map")) {
+		var serial = "";
+		console.log(Array.isArray(patient_names));
+		patient_names.forEach(function(x) {
+			serial += (x + "\n");
+		});
+		window.sessionStorage.setItem("patient_list", serial);
+		window.sessionStorage.setItem("patient_data", JSON.stringify(patient_data));
+		window.sessionStorage.setItem("patient_map", JSON.stringify(patient_map));
+		f();
+		return;
+	}
+	
+	
 	$.ajax({
 		type: "POST",
 		url: 'writer.php',
@@ -20,7 +34,7 @@ function saveAndCallback(f) {
 			console.log(errorThrown);
 		});
 	}).fail(function ( jqXHR, textStatus, errorThrown ) {
-		alert("Data could not be saved, check log for details.");
+		alert("Data could not be saved to file, check log for details.");
 		console.log(jqXHR);
 		console.log(textStatus);
 		console.log(errorThrown);
@@ -29,7 +43,7 @@ function saveAndCallback(f) {
 
 function logout() {
 	saveAndCallback(() => {
-		sessionStorage.clear();
+		sessionStorage.removeItem("name");
 		window.location.replace("login.html");
 	});
 }
@@ -48,6 +62,11 @@ var mode = undefined;
 			
 //this is ugly
 function loadNames() {
+	var list;
+	if(list = window.sessionStorage.getItem("patient_list")) { //exists
+		(patient_names = list.split("\n")).pop();
+		return;
+	}
 	//load in patient information
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -56,7 +75,6 @@ function loadNames() {
 		}
 		else if(this.readyState == 4 && this.status == 404) {
 			alert("Error: No Patient List Found On Server.");
-			patient_names = null;
 		}
 	}
 	xhttp.open("GET", "data/patient_list.txt", false); //this will cause a race condition if we load async
@@ -64,6 +82,11 @@ function loadNames() {
 }
 
 function loadData() {
+	var data;
+	if(data = window.sessionStorage.getItem("patient_data")) {
+		patient_data = JSON.parse(data);
+		return;
+	}
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if(this.readyState == 4 && this.status == 200) { 
@@ -71,7 +94,6 @@ function loadData() {
 		}
 		else if(this.readyState == 4 && this.status == 404) {
 			alert("Error: No Patient Data Found On Server.");
-			patient_data = null;
 		}
 	}
 	xhttp.open("GET", "data/patient_data.json", false);
@@ -79,14 +101,18 @@ function loadData() {
 }
 
 function loadMap() {
+	var map;
+	if(map = window.sessionStorage.getItem("patient_map")) {
+		patient_map = JSON.parse(map);
+		return;
+	}
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if(this.readyState == 4 && this.status == 200) { 
 			patient_map = JSON.parse(this.responseText);
 		}
 		else if(this.readyState == 4 && this.status == 404) {
-			alert("Error: No Patient Map Found On Server.");
-			patient_map = null;
+			alert("Error: No Patient Map Found On Server.");	
 		}
 	}
 	xhttp.open("GET", "data/patient_map.json", false);
