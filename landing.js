@@ -1,4 +1,4 @@
-function logout() {
+function saveAndCallback(f) {
 	//uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 	$.ajax({
 		type: "POST",
@@ -12,17 +12,31 @@ function logout() {
 			dataType: 'html',
 			data: { "to": "data/patient_data.json", "data": JSON.stringify(patient_data) }
 		}).done(function () {
-			sessionStorage.clear();
-			window.location.replace("login.html");
+			f();
 		}).fail(function ( jqXHR, textStatus, errorThrown ) {
+			alert("Data could not be saved, check log for details.");
 			console.log(jqXHR);
 			console.log(textStatus);
 			console.log(errorThrown);
 		});
 	}).fail(function ( jqXHR, textStatus, errorThrown ) {
+		alert("Data could not be saved, check log for details.");
 		console.log(jqXHR);
 		console.log(textStatus);
 		console.log(errorThrown);
+	});
+}
+
+function logout() {
+	saveAndCallback(() => {
+		sessionStorage.clear();
+		window.location.replace("login.html");
+	});
+}
+
+function go_scheduler() {
+	saveAndCallback(() => {
+		window.location.replace("phys_schedule.html");
 	});
 }
 
@@ -100,7 +114,6 @@ function pickup(html) {
 		var sub = match[2].match(/(.*)<\/strong>/);
 		if(sub)
 			match[2] = sub[1];
-		//print class + data;
 		parsed.push({"type": String(match[1]), "value": String(match[2])});
 	});
 	
@@ -116,7 +129,6 @@ function pickup(html) {
 		var cur_obj = stack.peekBack();
 		var cur_type = parsed[i].type;
 		var cur_val  = parsed[i].value;
-		console.log(cur_type, cur_val, i);
 		
 		switch(String(cur_type)) {
 			case "obj"      : stack.push({});
@@ -153,7 +165,7 @@ function getName(dn_split) {
 	if(mode === "phys")
 		name = document.getElementById("patient_list").getElementsByClassName("selected")[0];
 	else
-		name = { "innerHTML": assigned_patient.replace("-", " ") } //jfc
+		name = { "innerHTML": assigned_patient.replace("-", " ") }
 	
 	if(!name || dn_split)
 		return name;
@@ -198,16 +210,18 @@ function reloadDataViewer(name) {
 	if(!data)
 		return;
 	var table = document.getElementById("data-table");
-	const blacklist = ["name", "information", "saved-images", "saved-vitals"];
+	const blacklist = ["name"];
 	var table_html = dump(data, true, blacklist);
 	
-	//populate the element selector with top-level arrays and objects
+	const blacklist2 = ["information", "saved-images", "saved-vitals"];
+	//populate the element selector with top-level arrays and objects. This could *concievably* support
+	//nested objects / nested arrays, but I couldn't get it to work in time: so we blacklist them manually.
 	var el_box = document.getElementById("element-select-box");
 	var inner = "<option value=\"ignore\">Select Element...</option>";
 	Object.keys(data).forEach(function(x) {
-		if(typeof data[x] === 'object' && !blacklist.includes(x)) {
+		if(typeof data[x] === 'object' && !blacklist2.includes(x)) {
 			let full = x + " " + (Array.isArray(data[x]) ? "(array)" : "(object)");
-			inner += "<option value=\"" + full + "\">" + full + " " + "</option>"; //oh boy more clientside validation
+			inner += "<option value=\"" + full + "\">" + full + " " + "</option>";
 		}
 	});
 	el_box.innerHTML = inner;
@@ -234,7 +248,7 @@ function add_key() {
 		return;
 	}
 	
-	let super_key = document.getElementById("element-select-box").value.match(/(.*)\(.*\)/)[1].trim();
+	let super_key = document.getElementById("element-select-box").value.match(/^(.*)\(.*\)$/)[1].trim();
 	if( (patient_data[name][super_key]).includes(key_box.value)) {
 		alert("Key exists!");
 		return;
@@ -252,7 +266,7 @@ function del_key() {
 		return;
 	}
 	
-	let super_key = document.getElementById("element-select-box").value.match(/(.*)\(.*\)/)[1].trim();
+	let super_key = document.getElementById("element-select-box").value.match(/^(.*)\(.*\)$/)[1].trim();
 	if( !( (patient_data[name][super_key]).includes(key_box.value) )) {
 		alert("Key does not exist!");
 		return;
@@ -275,7 +289,7 @@ function add_kv() {
 		return;
 	}
 	
-	let super_key = document.getElementById("element-select-box").value.match(/(.*)\(.*\)/)[1].trim();
+	let super_key = document.getElementById("element-select-box").value.match(/^(.*)\(.*\)$/)[1].trim();
 	if( (patient_data[name][super_key][key_box.value]) ) {
 		alert("Key exists!");
 		return;
@@ -294,7 +308,7 @@ function del_kv() {
 		return;
 	}
 	
-	let super_key = document.getElementById("element-select-box").value.match(/(.*)\(.*\)/)[1].trim();
+	let super_key = document.getElementById("element-select-box").value.match(/^(.*)\(.*\)$/)[1].trim();
 	if( !(patient_data[name][super_key][key_box.value]) ) {
 		alert("Key does not exist!");
 		return;

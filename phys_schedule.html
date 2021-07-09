@@ -1,10 +1,44 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset = "utf-8">
+		<title>Physician Scheduler</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+		<script async src="scheduler.js"></script>
+		
+		<style>
+			#scheduler {
+				border: 3px solid black;
+				margin-top: 50px;
+				margin-left: 0px;
+				padding: 10px;
+				background-color: white;
+			}
+		</style>
 	</head>
-	<body>
-		<h1>Physician Scheduler</h1>
-		<p><a href="phys_landing.html">Back</a></p>
-		<p><a href="login.html">Logout</a></p>
+	<body style="background-color: powderblue">
+		<h1 class="text-center">Physician Scheduler</h1>
+		<div class="row form-group">
+			<div class="col-lg-8 offset-lg-2">
+				<div id="scheduler" class="text-center">
+					<button onclick="save()">Save</button>
+					<button onclick="go_back()">Return to Physician Workspace</button>
+					<button onclick="logout()">Logout</button>
+					<label for="nurses">Nurse</label>
+					<select id="nurses">
+						<option id="ignore">Select Nurse...</option>
+					</select>
+					<label for="patients">Patient</label>
+					<select id="patients">
+						<option id="ignore">Select Patient...</option>
+					</select>
+					<p id="selected">Assigned Patient:</p>
+					<button onclick="assign_pat()">Assign to selected patient</button>
+					<button onclick="unassign_pat()">Unassign nurse from assigned patient</button>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>

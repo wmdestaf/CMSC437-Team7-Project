@@ -3,8 +3,9 @@
 	<head>
 		<meta charset = "utf-8">
 		<title>Central ICU Patient eHealth and eMonitoring System - Login</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-		<script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 	<style>
 		#login {
 			border: 3px solid black;
@@ -30,7 +31,6 @@
 			
 			//This would ideally communicate with some manner of SQL server not exposed to the user, but out of scope for GUI class.
 			//In exchange, we do this terribleness with regex to simulate the result that we want.
-			//BECAUSE THERE IS NO SERVER, THE INFORMATION IS VALIDATED ON THE CLIENT SIDE WHICH IS HOPELESSLY INSECURE
 			
 			//grab hash and salt from DB
 			var xhttp = new XMLHttpRequest();
@@ -98,7 +98,7 @@
 			</div>
 		</div>
 
-		<p><a href="nurse_landing.html">Nurse</a></p>
-		<p><a href="phys_landing.html">Physician</a></p>
+		<!-- <p><a href="nurse_landing.html">Nurse</a></p> -->
+		<!-- <p><a href="phys_landing.html">Physician</a></p> -->
 	</body>
 </html>

@@ -115,8 +115,8 @@
 			"name": "Scott-Thomas",
 			"dob": "08-04-1968",
 			"sex": "F",
-			"height": 100,
-			"weight": 25
+			"height": "100",
+			"weight": "25"
 		},
 		"medical-history": {
 			"07-07-1974": "Injection(s) of diagnostic or therapeutic sub�stance(s) lumbar/sacral spine",
@@ -143,25 +143,25 @@
 		"reason-for-stay": "Paravertebral facet joint nerve destruction",
 		"saved-vitals": {
 			"04-01-1948|23:24:38": {
-				"hr": 145,
+				"hr": "145",
 				"bp": "150/165",
-				"SpO2": 88,
-				"Bpm": 12,
-				"tmp": 94.9
+				"SpO2": "88",
+				"Bpm": "12",
+				"tmp": "94.9"
 			},
 			"09-01-1972|15:38:30": {
-				"hr": 139,
+				"hr": "139",
 				"bp": "170/113",
-				"SpO2": 89,
-				"Bpm": 40,
-				"tmp": 94.4
+				"SpO2": "89",
+				"Bpm": "40",
+				"tmp": "94.4"
 			},
 			"04-06-1934|17:52:42": {
-				"hr": 119,
+				"hr": "119",
 				"bp": "113/150",
-				"SpO2": 80,
-				"Bpm": 7,
-				"tmp": 104.7
+				"SpO2": "80",
+				"Bpm": "7",
+				"tmp": "104.7"
 			}
 		},
 		"saved-images": [
@@ -240,9 +240,9 @@
 		"information": {
 			"name": "Richard-Gray",
 			"dob": "05-02-1927",
-			"sex": "F",
-			"height": 165,
-			"weight": 105
+			"sex": "M",
+			"height": "165",
+			"weight": "105"
 		},
 		"medical-history": {
 			"02-01-2004": "Cataract surgery w/intraocular implant 1 stage",
@@ -251,7 +251,7 @@
 			"04-02-1965": "Injection to paravertebral facet joint lmbar/ sacral spine 2 lev"
 		},
 		"current-medications": [
-			"Warfarin"
+			"Midazalam"
 		],
 		"former-medications": [
 			"Naproxen",
@@ -267,18 +267,25 @@
 		"reason-for-stay": "Colonoscopy and biopsy",
 		"saved-vitals": {
 			"03-12-1945|11:28:01": {
-				"hr": 141,
+				"hr": "141",
 				"bp": "141/92",
-				"SpO2": 81,
-				"Bpm": 22,
-				"tmp": 94.2
+				"SpO2": "81",
+				"Bpm": "22",
+				"tmp": "94.2"
 			},
 			"09-06-1992|08:55:58": {
-				"hr": 72,
+				"hr": "72",
 				"bp": "193/103",
-				"SpO2": 89,
-				"Bpm": 35,
-				"tmp": 99
+				"SpO2": "89",
+				"Bpm": "35",
+				"tmp": "99"
+			},
+			"07-08-2021|19:05:30": {
+				"hr": 75,
+				"bp": "120/80",
+				"SpO2": 99,
+				"Bpm": 14,
+				"tmp": 98.6
 			}
 		},
 		"saved-images": [
